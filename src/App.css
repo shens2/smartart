@@ -1,0 +1,32 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  position: relative; /* Establish positioning context for absolute elements */
+  overflow: visible; /* Ensure elements aren't clipped */
+}
+
+.App-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.App-header h1 {
+  color: #333;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: visible; /* Ensure floating elements aren't cut off */
+  padding: 20px 0;
+  /* No height restriction to allow floating elements to be visible */
+}
