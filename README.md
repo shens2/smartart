@@ -1,4 +1,4 @@
-# SmartArt 2.0
+# Smartart-2.0
 
 A modern implementation of SmartArt components for React applications.
 
