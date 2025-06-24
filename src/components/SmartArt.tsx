@@ -274,17 +274,19 @@ const BodyInput = styled.textarea<{ $isPressed?: boolean }>`
 const FloatingToolbar = styled.div<{ $show: boolean }>`
   position: absolute;
   top: -36px;
-  left: 42px;
+  left: 50%;
+  transform: translateX(-50%);
   background: white;
   border-radius: 8px;
-  padding: 4px 0px;
-  padding-left: 6px;
-  padding-right: 6px;
+  padding: 4px 6px;
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.12), 0px 4px 8px 0px rgba(0, 0, 0, 0.14);
   display: ${props => props.$show ? 'flex' : 'none'};
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   z-index: 20;
+  white-space: nowrap;
 `;
 
 const ToolbarButton = styled.button`
@@ -297,8 +299,9 @@ const ToolbarButton = styled.button`
   align-items: center;
   justify-content: center;
   color: #242424;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: background-color 0.2s ease;
+  flex-shrink: 0;
   
   &:hover {
     background: #f5f5f5;
@@ -306,12 +309,14 @@ const ToolbarButton = styled.button`
 `;
 
 const ToolbarIcon = styled.div<{ icon: 'copilot' | 'arrow-left' | 'arrow-right' | 'delete' }>`
-  width: ${props => props.icon === 'copilot' ? '19px' : '16px'};
+  width: ${props => props.icon === 'copilot' ? '16px' : '16px'};
   height: ${props => props.icon === 'delete' ? '17px' : props.icon === 'copilot' ? '16px' : '14px'};
+  display: block;
+  flex-shrink: 0;
   background-image: ${props => {
     switch (props.icon) {
       case 'copilot':
-        return `url("data:image/svg+xml,%3Csvg width='19' height='16' viewBox='0 0 19 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9.5 0C4.25329 0 0 3.58172 0 8C0 9.93706 0.793814 11.7178 2.16895 13.0659C2.46508 13.355 2.47349 13.8297 2.18441 14.1258C1.89532 14.4219 1.42058 14.4303 1.12445 14.1412C-0.49895 12.5582 -1.42108e-06 10.3579 -1.42108e-06 8C-1.42108e-06 3.02944 4.25329 -1 9.5 -1C14.7467 -1 19 3.02944 19 8C19 10.3579 18.499 12.5582 16.8756 14.1412C16.5794 14.4303 16.1047 14.4219 15.8156 14.1258C15.5265 13.8297 15.5349 13.355 15.8311 13.0659C17.2062 11.7178 18 9.93706 18 8C18 3.58172 13.7467 0 9.5 0Z' fill='%23242424'/%3E%3Cpath d='M6.5 6C6.22386 6 6 6.22386 6 6.5C6 6.77614 6.22386 7 6.5 7C6.77614 7 7 6.77614 7 6.5C7 6.22386 6.77614 6 6.5 6Z' fill='%23242424'/%3E%3Cpath d='M12.5 6C12.2239 6 12 6.22386 12 6.5C12 6.77614 12.2239 7 12.5 7C12.7761 7 13 6.77614 13 6.5C13 6.22386 12.7761 6 12.5 6Z' fill='%23242424'/%3E%3Cpath d='M6.5 10C6.5 9.44772 6.94772 9 7.5 9H11.5C12.0523 9 12.5 9.44772 12.5 10C12.5 10.5523 12.0523 11 11.5 11H7.5C6.94772 11 6.5 10.5523 6.5 10Z' fill='%23242424'/%3E%3C/svg%3E")`;
+        return `url("data:image/svg+xml,%3Csvg width='19' height='16' viewBox='0 0 19 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.9282 0H11.14C12.1934 0 13.1209 0.693927 13.4183 1.70449L13.8874 3.29881C14.0482 3.84522 14.5272 4.23174 15.0866 4.28042H15.3756C16.2632 4.28042 16.9483 4.53205 17.4027 5.04801C17.8453 5.5505 17.9916 6.218 18.0013 6.88665C18.0204 8.20751 17.5037 9.84836 17.092 11.1548C16.7338 12.2916 16.2735 13.4721 15.6557 14.3769C15.0405 15.2779 14.2005 15.9996 13.0736 15.9996H6.87588L6.86799 15.9996H6.86168C5.80827 15.9996 4.88075 15.3056 4.58341 14.2951L4.1143 12.7008C3.9536 12.1546 3.47493 11.7682 2.91585 11.7192H2.62618C1.73863 11.7192 1.05349 11.4676 0.599088 10.9516C0.156543 10.4491 0.0101817 9.78164 0.00051422 9.11298C-0.0185829 7.79212 0.498085 6.15127 0.909787 4.84487C1.26806 3.70803 1.7283 2.52756 2.3461 1.62278C2.96134 0.721738 3.80131 0 4.9282 0ZM1.86349 5.14543C1.43603 6.50184 0.984076 7.97304 1.00035 9.09852C1.00837 9.65304 1.13069 10.0423 1.3495 10.2907C1.55646 10.5257 1.92535 10.7193 2.62618 10.7193H5.25327C5.8625 10.7193 6.39922 10.3189 6.57318 9.7346C7.04275 8.15748 7.83892 5.49596 8.46732 3.45913L8.50031 3.35212C8.64945 2.86823 8.79377 2.40001 8.94918 1.98463C9.08157 1.63078 9.22975 1.29327 9.41044 0.999939H4.9282C4.28431 0.999939 3.70766 1.402 3.17189 2.18664C2.63868 2.96756 2.21353 4.03468 1.86349 5.14543ZM4.73563 11.7192C4.88309 11.928 4.99845 12.1632 5.07358 12.4185L5.54268 14.0128C5.71483 14.5979 6.25181 14.9996 6.86168 14.9996H6.88782C7.24677 14.996 7.49055 14.8266 7.64166 14.6217C7.80878 14.3951 7.96133 14.0783 8.11611 13.6646C8.2607 13.2781 8.39662 12.8373 8.54874 12.3439L8.579 12.2457C8.64401 12.035 8.71082 11.8176 8.7789 11.5953C8.54394 11.6726 8.29421 11.714 8.03709 11.714H5.41187C5.35937 11.7174 5.30648 11.7192 5.25327 11.7192H4.73563ZM7.19453 10.714H8.03709C8.5901 10.714 9.0841 10.3835 9.29945 9.884C9.73677 8.43816 10.1701 6.98802 10.4703 5.97969C10.5457 5.72633 10.6607 5.49296 10.8073 5.28556H9.96461C9.412 5.28556 8.91831 5.61558 8.70271 6.11449C8.26528 7.56072 7.83184 9.01135 7.53155 10.0199C7.45612 10.2733 7.34113 10.5066 7.19453 10.714ZM9.22296 4.40422C9.45786 4.32696 9.70755 4.28562 9.96461 4.28562H12.5909C12.6431 4.28217 12.6957 4.28042 12.7485 4.28042H13.2661C13.1186 4.07158 13.0033 3.83643 12.9281 3.58106L12.459 1.98675C12.2869 1.40168 11.7499 0.999939 11.14 0.999939H11.1252C10.7601 1.00017 10.5128 1.17092 10.3602 1.37795C10.193 1.60457 10.0405 1.92134 9.88571 2.33503C9.74112 2.7215 9.6052 3.16237 9.45308 3.65578L9.42282 3.75392C9.35782 3.96459 9.29102 4.18199 9.22296 4.40422ZM16.1383 10.8542C16.5658 9.4978 17.0177 8.0266 17.0015 6.90111C16.9935 6.34659 16.8711 5.95734 16.6523 5.70889C16.4454 5.47389 16.0765 5.28036 15.3756 5.28036H12.7485C12.1393 5.28036 11.6026 5.68074 11.4286 6.26503C10.9591 7.84215 10.1629 10.5037 9.5345 12.5405L9.50151 12.6475C9.35237 13.1314 9.20806 13.5996 9.05265 14.015C8.92025 14.3689 8.77207 14.7064 8.59138 14.9997H13.0736C13.7175 14.9997 14.2942 14.5976 14.8299 13.813C15.3631 13.0321 15.7883 11.965 16.1383 10.8542Z' fill='%23242424'/%3E%3C/svg%3E")`;
       case 'arrow-left':
         return `url("data:image/svg+xml,%3Csvg width='16' height='14' viewBox='0 0 16 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.16289 13.8666C7.36683 14.0528 7.68308 14.0384 7.86926 13.8345C8.05544 13.6305 8.04105 13.3143 7.83711 13.1281L1.66925 7.49736H15.5C15.7761 7.49736 16 7.2735 16 6.99736C16 6.72122 15.7761 6.49736 15.5 6.49736H1.67214L7.83711 0.86927C8.04105 0.68309 8.05544 0.366835 7.86926 0.162895C7.68308 -0.0410457 7.36683 -0.0554433 7.16289 0.130737L0.246538 6.44478C0.106589 6.57254 0.0267601 6.74008 0.00704861 6.91323C0.00241375 6.94058 0 6.96869 0 6.99736C0 7.02423 0.00211954 7.05061 0.00620079 7.07633C0.0243754 7.25224 0.104488 7.4229 0.246538 7.55258L7.16289 13.8666Z' fill='%23242424'/%3E%3C/svg%3E")`;
       case 'arrow-right':
@@ -555,6 +560,7 @@ const ListSmartArt: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
   const [buttonRect, setButtonRect] = useState<DOMRect | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [generatingImageForNode, setGeneratingImageForNode] = useState<number | null>(null);
+  const [generatingDescriptionForNode, setGeneratingDescriptionForNode] = useState<number | null>(null);
 
   // Auto-resize textarea function with minimal expansion
   const autoResizeTextarea = (textarea: HTMLTextAreaElement) => {
@@ -1382,6 +1388,10 @@ const ListSmartArt: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
             
             {/* Floating toolbar for pressed state */}
             <FloatingToolbar $show={pressedNode === node.id}>
+              <ToolbarButton title="Generate Description with AI" onClick={(e) => handleCopilotClick(node.id, e)}>
+                <ToolbarIcon icon="copilot" />
+              </ToolbarButton>
+              <ToolbarDivider />
               <ToolbarButton title="Move Left" onClick={(e) => handleMoveLeft(node.id, e)}>
                 <ToolbarIcon icon="arrow-left" />
               </ToolbarButton>
@@ -1393,6 +1403,14 @@ const ListSmartArt: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
                 <ToolbarIcon icon="delete" />
               </ToolbarButton>
             </FloatingToolbar>
+            
+            {/* Loading overlay for AI description generation */}
+            {generatingDescriptionForNode === node.id && (
+              <LoadingOverlay>
+                <LoadingSpinner />
+                <div>Generating description...</div>
+              </LoadingOverlay>
+            )}
           </NodeContainer>
         ))}
       </NodesRow>
