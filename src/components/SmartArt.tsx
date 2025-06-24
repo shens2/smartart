@@ -483,17 +483,17 @@ const InsertPictureMenu = styled.div<{ $show: boolean }>`
 `;
 
 // Create an overlay to block all mouse events when a menu is open
-const EventBlockingOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 850; // Above container and insert button, below menu
-  cursor: default;
-  background: transparent;
-  touch-action: none; // Disable touch actions too
-`;
+// const EventBlockingOverlay = styled.div`
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   z-index: 850; // Above container and insert button, below menu
+//   cursor: default;
+//   background: transparent;
+//   touch-action: none; // Disable touch actions too
+// `;
 
 const InsertPictureMenuItem = styled.div`
   padding: 10px 16px;
@@ -1106,10 +1106,10 @@ const ListSmartArt: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
   const mouseHandlersDisabled = insertPictureMenuOpen !== null;
 
   // Create conditional props for hover events
-  const containerHoverProps = isAnyMenuOpen ? {} : {
-    onMouseEnter: () => setContainerHovered(true),
-    onMouseLeave: () => setContainerHovered(false)
-  };
+  // const containerHoverProps = isAnyMenuOpen ? {} : {
+  //   onMouseEnter: () => setContainerHovered(true),
+  //   onMouseLeave: () => setContainerHovered(false)
+  // };
   
   // Create menu component outside of main JSX
   const renderImageMenu = () => {
@@ -1480,66 +1480,66 @@ const ListSmartArt: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
   );
 };
 
-// Styled components for tab interface
-const TabContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin: 0;
-`;
+// Styled components for tab interface (commented out - unused)
+// const TabContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   width: 100%;
+//   margin: 0;
+// `;
 
-const TabHeader = styled.div`
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  border-bottom: 1px solid #e0e0e0;
-  width: 100%;
-  background-color: white;
-  height: 50px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-`;
+// const TabHeader = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   margin: 0;
+//   padding: 0;
+//   border-bottom: 1px solid #e0e0e0;
+//   width: 100%;
+//   background-color: white;
+//   height: 50px;
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   z-index: 1000;
+// `;
 
-const TabButton = styled.button<{ $active: boolean }>`
-  padding: 0 24px;
-  height: 100%;
-  font-size: 16px;
-  font-weight: ${props => props.$active ? '600' : '400'};
-  background-color: transparent;
-  border: none;
-  border-bottom: 3px solid ${props => props.$active ? '#3498db' : 'transparent'};
-  color: ${props => props.$active ? '#3498db' : '#666'};
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin: 0 10px;
+// const TabButton = styled.button<{ $active: boolean }>`
+//   padding: 0 24px;
+//   height: 100%;
+//   font-size: 16px;
+//   font-weight: ${props => props.$active ? '600' : '400'};
+//   background-color: transparent;
+//   border: none;
+//   border-bottom: 3px solid ${props => props.$active ? '#3498db' : 'transparent'};
+//   color: ${props => props.$active ? '#3498db' : '#666'};
+//   cursor: pointer;
+//   transition: all 0.2s ease;
+//   margin: 0 10px;
   
-  &:hover {
-    color: #3498db;
-    border-bottom-color: ${props => props.$active ? '#3498db' : '#e0e0e0'};
-  }
+//   &:hover {
+//     color: #3498db;
+//     border-bottom-color: ${props => props.$active ? '#3498db' : '#e0e0e0'};
+//   }
   
-  &:focus {
-    outline: none;
-  }
-`;
+//   &:focus {
+//     outline: none;
+//   }
+// `;
 
-const TabContent = styled.div`
-  width: 100%;
-  margin-top: 50px; /* Equal to the height of TabHeader */
-`;
+// const TabContent = styled.div`
+//   width: 100%;
+//   margin-top: 50px; /* Equal to the height of TabHeader */
+// `;
 
-// Fade wrapper for smooth transitions
-const FadeWrapper = styled.div<{ $show: boolean }>`
-  opacity: ${props => props.$show ? '1' : '0'};
-  display: ${props => props.$show ? 'block' : 'none'};
-  transition: opacity 0.3s ease;
-  width: 100%;
-`;
+// Fade wrapper for smooth transitions (commented out - unused)
+// const FadeWrapper = styled.div<{ $show: boolean }>`
+//   opacity: ${props => props.$show ? '1' : '0'};
+//   display: ${props => props.$show ? 'block' : 'none'};
+//   transition: opacity 0.3s ease;
+//   width: 100%;
+// `;
 
 // Styled refresh button positioned above the component, aligned with Birds column
 const RefreshButton = styled.button`
