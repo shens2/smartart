@@ -1,6 +1,7 @@
 {
   "name": "smartart-component",
   "version": "0.1.0",
+  "homepage": "https://shens2.github.io/smartart",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
