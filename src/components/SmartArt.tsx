@@ -305,11 +305,13 @@ const ToolbarButton = styled.button`
   }
 `;
 
-const ToolbarIcon = styled.div<{ icon: 'arrow-left' | 'arrow-right' | 'delete' }>`
-  width: 16px;
-  height: ${props => props.icon === 'delete' ? '17px' : '14px'};
+const ToolbarIcon = styled.div<{ icon: 'copilot' | 'arrow-left' | 'arrow-right' | 'delete' }>`
+  width: ${props => props.icon === 'copilot' ? '19px' : '16px'};
+  height: ${props => props.icon === 'delete' ? '17px' : props.icon === 'copilot' ? '16px' : '14px'};
   background-image: ${props => {
     switch (props.icon) {
+      case 'copilot':
+        return `url("data:image/svg+xml,%3Csvg width='19' height='16' viewBox='0 0 19 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M9.5 0C4.25329 0 0 3.58172 0 8C0 9.93706 0.793814 11.7178 2.16895 13.0659C2.46508 13.355 2.47349 13.8297 2.18441 14.1258C1.89532 14.4219 1.42058 14.4303 1.12445 14.1412C-0.49895 12.5582 -1.42108e-06 10.3579 -1.42108e-06 8C-1.42108e-06 3.02944 4.25329 -1 9.5 -1C14.7467 -1 19 3.02944 19 8C19 10.3579 18.499 12.5582 16.8756 14.1412C16.5794 14.4303 16.1047 14.4219 15.8156 14.1258C15.5265 13.8297 15.5349 13.355 15.8311 13.0659C17.2062 11.7178 18 9.93706 18 8C18 3.58172 13.7467 0 9.5 0Z' fill='%23242424'/%3E%3Cpath d='M6.5 6C6.22386 6 6 6.22386 6 6.5C6 6.77614 6.22386 7 6.5 7C6.77614 7 7 6.77614 7 6.5C7 6.22386 6.77614 6 6.5 6Z' fill='%23242424'/%3E%3Cpath d='M12.5 6C12.2239 6 12 6.22386 12 6.5C12 6.77614 12.2239 7 12.5 7C12.7761 7 13 6.77614 13 6.5C13 6.22386 12.7761 6 12.5 6Z' fill='%23242424'/%3E%3Cpath d='M6.5 10C6.5 9.44772 6.94772 9 7.5 9H11.5C12.0523 9 12.5 9.44772 12.5 10C12.5 10.5523 12.0523 11 11.5 11H7.5C6.94772 11 6.5 10.5523 6.5 10Z' fill='%23242424'/%3E%3C/svg%3E")`;
       case 'arrow-left':
         return `url("data:image/svg+xml,%3Csvg width='16' height='14' viewBox='0 0 16 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.16289 13.8666C7.36683 14.0528 7.68308 14.0384 7.86926 13.8345C8.05544 13.6305 8.04105 13.3143 7.83711 13.1281L1.66925 7.49736H15.5C15.7761 7.49736 16 7.2735 16 6.99736C16 6.72122 15.7761 6.49736 15.5 6.49736H1.67214L7.83711 0.86927C8.04105 0.68309 8.05544 0.366835 7.86926 0.162895C7.68308 -0.0410457 7.36683 -0.0554433 7.16289 0.130737L0.246538 6.44478C0.106589 6.57254 0.0267601 6.74008 0.00704861 6.91323C0.00241375 6.94058 0 6.96869 0 6.99736C0 7.02423 0.00211954 7.05061 0.00620079 7.07633C0.0243754 7.25224 0.104488 7.4229 0.246538 7.55258L7.16289 13.8666Z' fill='%23242424'/%3E%3C/svg%3E")`;
       case 'arrow-right':
@@ -958,6 +960,142 @@ const ListSmartArt: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
     setEditingBody(null);
   };
 
+  // AI Description Generation Function
+  const generateDescriptionWithAI = async (title: string): Promise<string | null> => {
+    try {
+      // Show loading state
+      setGeneratingDescriptionForNode(pressedNode);
+      
+      console.log(`Generating description for title: "${title}"`);
+      
+      // Get OpenAI API key from environment variables
+      // This is safer than hardcoding but still not ideal for production
+      // In production, API calls should go through your backend server
+      let OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+      
+      // Check sessionStorage for previously entered key
+      if (!OPENAI_API_KEY || OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY_HERE') {
+        const storedKey = sessionStorage.getItem('openai_api_key');
+        if (storedKey) {
+          OPENAI_API_KEY = storedKey;
+        }
+      }
+      
+      // If still no API key, prompt user
+      if (!OPENAI_API_KEY || OPENAI_API_KEY === 'YOUR_OPENAI_API_KEY_HERE') {
+        const userKey = prompt(
+          'Enter your OpenAI API key to generate descriptions:\\n\\n' +
+          'Get your API key from: https://platform.openai.com/api-keys\\n\\n' +
+          'Note: This will be stored temporarily in your browser session.'
+        );
+        
+        if (!userKey) {
+          console.log('OpenAI API key not provided. Copilot functionality disabled.');
+          setGeneratingDescriptionForNode(null);
+          return null;
+        }
+        
+        // Store in sessionStorage for this session
+        sessionStorage.setItem('openai_api_key', userKey);
+        OPENAI_API_KEY = userKey;
+      }
+      
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENAI_API_KEY as string}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "You are an assistant that writes short, friendly descriptions." },
+            { role: "user", content: `Write a short 1–2 sentence description of the word '${title}'.` }
+          ],
+          temperature: 0.7,
+          max_tokens: 60
+        })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.text();
+        throw new Error(`OpenAI API error: ${res.status} ${res.statusText} - ${errorData}`);
+      }
+
+      const data = await res.json();
+      const description = data.choices?.[0]?.message?.content?.trim();
+      
+      if (!description) {
+        throw new Error('No description generated');
+      }
+
+      console.log(`Generated description: "${description}"`);
+      
+      setGeneratingDescriptionForNode(null);
+      return description;
+      
+    } catch (error: unknown) {
+      console.error('Error generating description:', error);
+      setGeneratingDescriptionForNode(null);
+      
+      // Return a fallback description instead of throwing
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.warn(`Falling back to default description due to error: ${errorMessage}`);
+      
+      return `A fascinating topic about ${title.toLowerCase()} that deserves exploration and understanding.`;
+    }
+  };
+
+  const handleCopilotClick = async (nodeId: number, event: React.MouseEvent) => {
+    // Stop event propagation to prevent triggering other click handlers
+    event.stopPropagation();
+    
+    // Find the current node to get the title
+    const currentNode = nodes.find(node => node.id === nodeId);
+    if (!currentNode) return;
+    
+    try {
+      // Get the title text
+      const title = currentNode.title;
+      
+      // Generate a description using OpenAI
+      const generatedDescription = await generateDescriptionWithAI(title);
+      
+      // Only update if we got a valid description
+      if (generatedDescription) {
+        // Update the node with the generated description
+        setNodes(prevNodes => 
+          prevNodes.map(node => 
+            node.id === nodeId ? { ...node, body: generatedDescription } : node
+          )
+        );
+        
+        // Enter editing mode for the body to show the result immediately
+        setEditingBody(nodeId);
+        
+        // If there's a textarea ref, focus it and select all text
+        setTimeout(() => {
+          if (bodyInputRef.current) {
+            bodyInputRef.current.focus();
+            bodyInputRef.current.select();
+            // Auto-resize textarea after content change
+            autoResizeTextarea(bodyInputRef.current);
+          }
+        }, 0);
+      }
+      
+    } catch (error: unknown) {
+      console.error('Error generating description:', error);
+      
+      // Show error message to user
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Failed to generate description: ${errorMessage}. Please try again.`);
+    } finally {
+      // Always clear the loading state
+      setGeneratingDescriptionForNode(null);
+    }
+  };
+
   // Disable all mouse handlers when menu is open
   const mouseHandlersDisabled = insertPictureMenuOpen !== null;
 
@@ -1385,13 +1523,106 @@ const FadeWrapper = styled.div<{ $show: boolean }>`
   width: 100%;
 `;
 
-// Demo component that renders ListSmartArt (CycleSmartArt temporarily hidden)
-const SmartArtDemo: React.FC<SmartArtProps> = (props) => {
-  // Simplified component without tabs - only showing ListSmartArt
+// Styled refresh button positioned above the component, aligned with Birds column
+const RefreshButton = styled.button`
+  position: absolute;
+  top: -60px;
+  right: 0;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const RefreshIcon = styled.span`
+  display: inline-block;
+  font-size: 16px;
+  animation: ${props => props.className?.includes('spinning') ? 'spin 0.5s ease-in-out' : 'none'};
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+
+const SmartArtWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 80px 0 20px 0; /* Added top padding to accommodate the button */
+  position: relative;
+`;
+
+/**
+ * SmartArtDemo - The main demo component with refresh functionality
+ * 
+ * This component wraps the ListSmartArt component and provides a refresh button
+ * that completely resets the SmartArt to its original state by forcing a re-mount.
+ * This simulates a browser refresh without actually refreshing the page.
+ * 
+ * Features:
+ * - Resets all node data to original values
+ * - Clears all editing states
+ * - Resets all hover and interaction states
+ * - Clears any open menus or dialogs
+ * - Floating action button positioned at bottom right
+ * 
+ * @param initialNodes - The initial array of nodes that will be restored on refresh
+ */
+const SmartArtDemo: React.FC<SmartArtProps> = ({ nodes: initialNodes }) => {
+  const [key, setKey] = useState(0); // Key to force re-mount
+  const [isSpinning, setIsSpinning] = useState(false);
+
+  const handleRefresh = () => {
+    setIsSpinning(true);
+    // Force complete re-mount of the component by changing the key
+    setKey(prev => prev + 1);
+    
+    // Reset spinning animation after a short delay
+    setTimeout(() => {
+      setIsSpinning(false);
+    }, 500);
+  };
+
   return (
-    <div style={{ width: '100%' }}>
-      <ListSmartArt {...props} />
-    </div>
+    <SmartArtWrapper>
+      <div style={{ position: 'relative' }}>
+        <RefreshButton onClick={handleRefresh} title="Reset SmartArt to original state">
+          <RefreshIcon className={isSpinning ? 'spinning' : ''}>🔄</RefreshIcon>
+          Reset
+        </RefreshButton>
+        <ListSmartArt key={key} nodes={initialNodes} />
+      </div>
+    </SmartArtWrapper>
   );
 };
 
